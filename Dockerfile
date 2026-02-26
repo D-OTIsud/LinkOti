@@ -10,8 +10,9 @@ COPY public ./public
 COPY data ./data
 
 ENV PORT=8080
-# Empty default (override in Coolify). Do not bake secrets into the image.
 ENV ADMIN_TOKEN="${ADMIN_TOKEN}"
+ENV ADMIN_PAGE_USER="${ADMIN_PAGE_USER}"
+ENV ADMIN_PAGE_PASSWORD="${ADMIN_PAGE_PASSWORD}"
 EXPOSE 8080
 
 CMD ["npm", "start"]
