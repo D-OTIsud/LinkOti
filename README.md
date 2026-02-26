@@ -25,10 +25,14 @@ Puis ouvrez:
 En production, définissez une variable d’environnement **`ADMIN_TOKEN`**.  
 L’éditeur enverra `Authorization: Bearer <token>` pour sauvegarder/reset.
 
+Pour protéger l’accès à la page admin elle-même (`/admin.html`), vous pouvez aussi définir:
+- `ADMIN_PAGE_PASSWORD` (recommandé)
+- `ADMIN_PAGE_USER` (optionnel, défaut: `admin`)
+
 ### Deploy with Coolify
 - **Build**: utilise le `Dockerfile`
 - **Port**: `8080`
-- **Env**: `ADMIN_TOKEN` (recommandé)
+- **Env**: `ADMIN_TOKEN` (recommandé), `ADMIN_PAGE_PASSWORD` (recommandé)
 - **Persistent storage**: montez un volume sur **`/app/data`** (sinon les changements seront perdus à chaque redeploy)
 
 

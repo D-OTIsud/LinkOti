@@ -10,6 +10,8 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const DATA_FILE = process.env.DATA_FILE || path.join(DATA_DIR, "page-data.json");
 const DEFAULT_FILE = process.env.DEFAULT_FILE || path.join(DATA_DIR, "page-data.default.json");
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "";
+const ADMIN_PAGE_USER = process.env.ADMIN_PAGE_USER || "admin";
+const ADMIN_PAGE_PASSWORD = process.env.ADMIN_PAGE_PASSWORD || "";
 
 function isObject(x) {
   return x != null && typeof x === "object" && !Array.isArray(x);
@@ -51,6 +53,34 @@ function requireAdmin(req, res, next) {
   if (!token || token !== ADMIN_TOKEN) {
     return res.status(401).json({ ok: false, error: "Unauthorized" });
   }
+  return next();
+}
+
+function requireAdminPage(req, res, next) {
+  if (!ADMIN_PAGE_PASSWORD) return next(); // no auth configured
+
+  const auth = String(req.headers.authorization || "");
+  if (!auth.startsWith("Basic ")) {
+    res.setHeader("WWW-Authenticate", 'Basic realm="Admin"');
+    return res.status(401).send("Authentication required.");
+  }
+
+  let user = "";
+  let pass = "";
+  try {
+    const decoded = Buffer.from(auth.slice("Basic ".length), "base64").toString("utf8");
+    const idx = decoded.indexOf(":");
+    if (idx >= 0) {
+      user = decoded.slice(0, idx);
+      pass = decoded.slice(idx + 1);
+    }
+  } catch (_) {}
+
+  if (user !== ADMIN_PAGE_USER || pass !== ADMIN_PAGE_PASSWORD) {
+    res.setHeader("WWW-Authenticate", 'Basic realm="Admin"');
+    return res.status(401).send("Unauthorized.");
+  }
+
   return next();
 }
 
@@ -102,6 +132,16 @@ app.delete("/api/page-data", requireAdmin, async (_req, res) => {
 });
 
 const PUBLIC_DIR = path.join(__dirname, "public");
+
+// Optional protection for admin UI routes (separate from API token).
+app.get("/admin.html", requireAdminPage, (_req, res) => {
+  res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
+});
+
+app.get("/admin.js", requireAdminPage, (_req, res) => {
+  res.type("application/javascript").sendFile(path.join(PUBLIC_DIR, "admin.js"));
+});
+
 app.use(express.static(PUBLIC_DIR, { extensions: ["html"] }));
 
 app.get("/", (_req, res) => {
