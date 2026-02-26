@@ -134,6 +134,12 @@ app.delete("/api/page-data", requireAdmin, async (_req, res) => {
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 // Optional protection for admin UI routes (separate from API token).
+// IMPORTANT: Express static is configured with `extensions: ["html"]`, which can map `/admin` -> `admin.html`.
+// We explicitly protect `/admin` and `/admin/` to prevent bypassing auth.
+app.get(["/admin", "/admin/"], requireAdminPage, (_req, res) => {
+  res.redirect(302, "/admin.html");
+});
+
 app.get("/admin.html", requireAdminPage, (_req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
 });
