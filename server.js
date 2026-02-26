@@ -5,7 +5,7 @@ const express = require("express");
 
 const app = express();
 
-const PORT = Number.parseInt(process.env.PORT || "3000", 10);
+const PORT = Number.parseInt(process.env.PORT || "8080", 10);
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const DATA_FILE = process.env.DATA_FILE || path.join(DATA_DIR, "page-data.json");
 const DEFAULT_FILE = process.env.DEFAULT_FILE || path.join(DATA_DIR, "page-data.default.json");

@@ -13,8 +13,8 @@ npm start
 ```
 
 Puis ouvrez:
-- `http://localhost:3000/` (page publique)
-- `http://localhost:3000/admin.html` (éditeur)
+- `http://localhost:8080/` (page publique)
+- `http://localhost:8080/admin.html` (éditeur)
 
 ### API
 - `GET /api/page-data` → récupère les données
@@ -27,7 +27,7 @@ L’éditeur enverra `Authorization: Bearer <token>` pour sauvegarder/reset.
 
 ### Deploy with Coolify
 - **Build**: utilise le `Dockerfile`
-- **Port**: `3000`
+- **Port**: `8080`
 - **Env**: `ADMIN_TOKEN` (recommandé)
 - **Persistent storage**: montez un volume sur **`/app/data`** (sinon les changements seront perdus à chaque redeploy)
 
